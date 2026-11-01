@@ -1,0 +1,68 @@
+const P=require('./parser.js');P.setDishes(require('./dishes.js'));
+// [frase, [[nombre|estado, gramos], ...]]  (gramos null = no se chequea)
+const T=[
+['200 g de nalga, 2 huevos y una banana',[['Nalga|crudo',200],['Huevo entero|crudo',100],['Banana|—',118]]],
+['1 taza de arroz cocido con 150 de pollo',[['Arroz blanco|cocido',158],['Pechuga de pollo (sin piel)|crudo',150]]],
+['150 g de pollo a la plancha',[['Pechuga de pollo (sin piel)|cocido',150]]],
+['pechuga cocida 180g',[['Pechuga de pollo (sin piel)|cocido',180]]],
+['300gr de peceto crudo',[['Peceto|crudo',300]]],
+['medio kilo de vacio',[['Vacío|crudo',500]]],
+['1,5 kg de cuadril',[['Cuadril|crudo',1500]]],
+['dos bananas',[['Banana|—',236]]],
+['una manzana',[['Manzana|—',182]]],
+['3 claras',[['Clara de huevo|crudo',99]]],
+['tres huevos duros',[['Huevo duro|cocido',150]]],
+['50 g de avena',[['Avena arrollada|crudo',50]]],
+['avena 40',[['Avena arrollada|crudo',40]]],
+['2 cdas de aceite de oliva',[['Aceite de oliva|—',27]]],
+['1 cdita de miel',[['Miel|—',7]]],
+['un vaso de leche',[['Leche descremada|—',245]]],
+['200 ml de leche entera',[['Leche entera|—',200]]],
+['1 yogur griego',[['Yogur griego descremado|—',null]]],
+['2 tostadas integrales',[['Pan integral|—',64]]],
+['2 fetas de jamon',[['Jamón cocido magro|cocido',null]]],
+['100 de ricota',[['Ricota descremada|—',100]]],
+['250 de entraña',[['Entraña|crudo',250]]],
+['bife de chorizo 220 g',[['Bife de chorizo|crudo',220]]],
+['200 g de bola de lomo al horno',[['Bola de lomo|cocido',200]]],
+['carne picada 150',[['Carne picada magra (95/5)|crudo',150]]],
+['lata de atun',[['Atún al natural (lata)|cocido',null]]],
+['150 g de merluza',[['Merluza|crudo',150]]],
+['200g de batata asada',[['Batata|cocido',200]]],
+['1 papa hervida',[['Papa hervida|cocido',null]]],
+['100 g de lentejas',[['Lentejas|cocido',100]]],
+['100 g de lentejas crudas',[['Lentejas|crudo',100]]],
+['un puñado de almendras',[['Almendras|—',null]]],
+['30 g de mani',[['Maní tostado|—',30]]],
+['media palta',[['Palta|—',null]]],
+['ensalada de lechuga y tomate',[['Lechuga|crudo',null],['Tomate|crudo',null]]],
+['milanesa al horno',[['Nalga|crudo',150],['Huevo entero|crudo',25],['Pan rallado|—',30]]],
+['2 milanesas al horno',[['Nalga|crudo',300],['Huevo entero|crudo',50],['Pan rallado|—',60]]],
+['pollo con arroz',[['Pechuga de pollo (sin piel)|cocido',150],['Arroz blanco|cocido',150],['Aceite de oliva|—',5]]],
+['tortilla de claras y un cafe',[['Clara de huevo|crudo',165],['Huevo entero|crudo',50],['Espinaca|crudo',30],['Aceite de oliva|—',3],['Café|—',null]]],
+['ensalada completa',[['Lechuga|crudo',60],['Tomate|crudo',100],['Zanahoria|crudo',50],['Huevo duro|cocido',50],['Choclo|cocido',40],['Aceite de oliva|—',5]]],
+['licuado proteico',[['Leche descremada|—',250],['Proteína whey (suero)|—',30],['Banana|—',118]]],
+['200 g de fideos con salsa de tomate',[['Fideos secos (trigo)|cocido',200],['Salsa de tomate|—',null]]],
+['1 taza y media de arroz integral',[['Arroz integral|cocido',303]]],
+['una taza de quinoa',[['Quinoa|cocido',185]]],
+['200g brocoli + 100g zanahoria',[['Brócoli|crudo',200],['Zanahoria|crudo',100]]],
+['frutillas 150',[['Frutilla|—',150]]],
+['200 gramos de yogur descremado y 30 de granola',[['Yogur natural descremado|—',200],['Granola|—',30]]],
+['150g de bondiola',[['Bondiola de cerdo|crudo',150]]],
+['lomo de cerdo 200 g cocido',[['Lomo de cerdo|cocido',200]]],
+['salmon 180 g',[['Salmón rosado|crudo',180]]],
+['pechga de poyo 200',[['Pechuga de pollo (sin piel)|crudo',200]]],
+['200 de merlusa',[['Merluza|crudo',200]]],
+['Ciento cincuenta gramos de nalga',[['Nalga|crudo',150]]],
+['un par de huevos',[['Huevo entero|crudo',100]]],
+['1/2 taza de avena',[['Avena arrollada|crudo',null]]],
+['queso cottage 100 g, 1 kiwi y 10 g de chia',[['Queso cottage|—',100],['Kiwi|—',null],['Semillas de chía|—',10]]],
+];
+let pass=0,fail=0,checks=0;const fails=[];
+for(const [ph,exp] of T){const r=P.parse(ph).filter(x=>x.type==='food');let ok=r.length===exp.length;
+ exp.forEach(([k,g],i)=>{checks++;const it=r[i];if(!it||it.key!==k||(g!=null&&Math.abs(it.g-g)>1))ok=false});
+ if(ok)pass++;else{fail++;fails.push(ph+'\n   got: '+r.map(x=>x.key+' '+x.g).join(' | ')+'\n   exp: '+exp.map(e=>e.join(' ')).join(' | '))}}
+// unknown handling
+const u=P.parse('200 g de xyzqw');const unk=u.length===1&&u[0].type==='unknown';
+console.log(`Frases: ${T.length} · OK ${pass} · FALLAN ${fail} · desconocido detectado: ${unk}`);fails.forEach(f=>console.log('✗ '+f));
+process.exitCode=fail||!unk?1:0;

@@ -1,0 +1,18 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Macros 2.0 — anotá lo que comiste como lo decís</title>
+<meta name="description" content="Escribí lo que comiste como hablás (“200 g de nalga, 2 huevos y una banana”) y Macros 2.0 calcula calorías y macros con alimentos de Argentina. Funciona offline.">
+<meta name="theme-color" content="#faf6ef"><link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="style.css"></head><body>
+<header class="top"><div class="brand"><span class="logo" aria-hidden="true">2.0</span><span>Macros <b>2.0</b></span></div><button class="gear" id="gear" aria-label="🎯 Mis objetivos">🎯 <span id="kleft"></span></button></header>
+<main id="view"></main>
+<nav class="tabs" aria-label="Secciones">
+<button data-tab="anotar" class="on">✍️<span>Anotar</span></button>
+<button data-tab="platos">🍽️<span>Platos</span></button>
+<button data-tab="falta">🧭<span>¿Qué me falta?</span></button>
+<button data-tab="historial">📅<span>Historial</span></button>
+</nav>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-bg"></div><div class="modal-card" id="mcard"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="foods.js"></script><script src="dishes.js"></script><script src="parser.js"></script><script src="app.js"></script>
+</body></html>
